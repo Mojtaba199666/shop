@@ -10,7 +10,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 router = DefaultRouter()
 router.register('brand', BrandViewSet)
 router.register('category', CategoryViewSet)
-router.register('product', ProductViewSet)
+router.register('product', ProductViewSet, basename='product')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

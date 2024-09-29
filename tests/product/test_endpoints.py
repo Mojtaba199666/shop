@@ -27,7 +27,7 @@ class TestProductEndpoint:
         assert len(json.loads(response.content)) == 4
 
 
-class TestBrandEndppoint:
+class TestBrandEndpoint:
 
     def test_brand_endpoint(self, brand_factory):
 

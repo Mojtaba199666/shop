@@ -22,7 +22,6 @@ class ProductFactory(factory.django.DjangoModelFactory):
         model = Product
 
     name = factory.sequence(lambda x: f"product_test_{x}")
-    price = factory.Faker('random_int')
     description = factory.Faker('paragraph')
     category = factory.SubFactory(CategoryFactory)
     brand = factory.SubFactory(BrandFactory)
