@@ -17,7 +17,7 @@ class TestCategoryEndpoint:
 
 
 class TestProductEndpoint:
-    def test_product_endpoint(self, product_factory):
+    def test_get_all_product(self, product_factory):
 
         product_factory.create_batch(4)
 
@@ -25,6 +25,35 @@ class TestProductEndpoint:
 
         assert response.status_code == 200
         assert len(json.loads(response.content)) == 4
+
+    def test_get_product_with_id(self, product_factory):
+
+        obj=product_factory(name='test')
+
+        response = APIClient().get(f"/api/product/{obj.id}")
+
+        assert response.status_code == 200
+        assert len(json.loads(response.content)) == 6
+
+    def test_get_product_with_category(self, product_factory, category_factory):
+        fake_category = category_factory()
+        product_factory(category=fake_category)
+
+        response = APIClient().get(f"/api/product/category/{fake_category.name}/")
+
+        assert response.status_code == 200
+        assert len(json.loads(response.content)) == 1
+
+    def test_get_product_with_brand(self, product_factory, brand_factory):
+        fake_brand = brand_factory()
+        product_factory(brand=fake_brand)
+        product_factory(brand=fake_brand)
+        product_factory()
+        response = APIClient().get(f"/api/product/brand/{fake_brand.name}/")
+        print(json.loads(response.content))
+
+        assert response.status_code == 200
+        assert len(json.loads(response.content)) == 2
 
 
 class TestBrandEndpoint:
