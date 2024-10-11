@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from .models import *
 from .serializer import *
@@ -73,6 +73,28 @@ class ProductViewSet(viewsets.ViewSet):
         # با ارور مواجه می‌شویم که نیاز است مدیریت خطا روی این ارور انجامم شود. علاوه بر
         # روش‌ گفته شده در جلسات قبل، می‌توان از تابع زیر استفاده نمود که در صورت عدم وجود آیدی خطای ۴۰۴ بدهد
         # بین تمامی روش‌های قبل، این روش بهترین روش خواهد بود.
-        serializer_data = ProductSerializer(get_object_or_404(self.queryset, pk=pk))
+        serializer_data = ProductSerializer(get_object_or_404(self.get_queryset(), pk=pk))
         # به کمک get_object_or_404 تعریف می‌شود که در صورت عدم وجود آیدی ارور ۴۰۴ را برگرداند.
         return Response(serializer_data.data)
+
+    @extend_schema(responses=ProductSerializer, request=ProductSerializer)
+    def create(self, request):
+        serializer_data = ProductSerializer(data=request.data)
+
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response(serializer_data.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(responses=ProductSerializer, request=ProductSerializer)
+    def update(self, request, pk=None):
+        serializer_data = ProductSerializer(get_object_or_404(self.get_queryset(), pk=pk),data=request.data)
+
+        if serializer_data.is_valid():
+            serializer_data.save()
+            return Response(serializer_data.data, status=status.HTTP_200_OK)
+
+        return Response(serializer_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
